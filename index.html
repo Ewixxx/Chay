@@ -7,7 +7,6 @@
   <title>Date Planner for Czaree 💖</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     .slider {
       display: none;
@@ -29,14 +28,12 @@
         opacity: 0;
         transform: scale(0.97);
       }
-
       to {
         opacity: 1;
         transform: scale(1);
       }
     }
 
-    /* Floating Music Button */
     #music-btn {
       position: fixed;
       bottom: 20px;
@@ -69,7 +66,6 @@
       💖 Date Planner for Czaree Elleona Salvador Castro 💖
     </h1>
 
-    <!-- Date Type -->
     <label class="block mb-2 font-semibold text-gray-700">Choose Date Type:</label>
     <select id="dateType" class="w-full p-2 border-2 border-pink-200 rounded-lg mb-4 focus:ring-2 focus:ring-pink-400">
       <option value="">-- Select a Type --</option>
@@ -82,56 +78,32 @@
       <option value="Shopping">🛍️ Shopping</option>
     </select>
 
-    <!-- Image Preview -->
     <div id="imageSlider" class="mb-4">
-      <div id="Coffee Date" class="slider">
-        <img src="coffee.jpg" class="rounded-lg shadow-md w-full h-56 object-cover" />
-      </div>
-      <div id="Picnic Date" class="slider">
-        <img src="rb.jpg" class="rounded-lg shadow-md w-full h-56 object-cover" />
-      </div>
-      <div id="Museum Date" class="slider">
-        <img src="museum.jpg" class="rounded-lg shadow-md w-full h-56 object-cover" />
-      </div>
-      <div id="Night Chill" class="slider">
-        <img src="night.jpg" class="rounded-lg shadow-md w-full h-56 object-cover" />
-      </div>
-      <div id="Movie Date" class="slider">
-        <img src="cinema.jpg" class="rounded-lg shadow-md w-full h-56 object-cover" />
-      </div>
-      <div id="Pet Walking" class="slider">
-        <img src="panda.jpg" class="rounded-lg shadow-md w-full h-56 object-cover" />
-      </div>
-      <div id="Shopping" class="slider">
-        <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f"
-          class="rounded-lg shadow-md w-full h-56 object-cover" />
-      </div>
+      <div id="Coffee Date" class="slider"><img src="coffee.jpg" class="rounded-lg shadow-md w-full h-56 object-cover" /></div>
+      <div id="Picnic Date" class="slider"><img src="rb.jpg" class="rounded-lg shadow-md w-full h-56 object-cover" /></div>
+      <div id="Museum Date" class="slider"><img src="museum.jpg" class="rounded-lg shadow-md w-full h-56 object-cover" /></div>
+      <div id="Night Chill" class="slider"><img src="night.jpg" class="rounded-lg shadow-md w-full h-56 object-cover" /></div>
+      <div id="Movie Date" class="slider"><img src="cinema.jpg" class="rounded-lg shadow-md w-full h-56 object-cover" /></div>
+      <div id="Pet Walking" class="slider"><img src="panda.jpg" class="rounded-lg shadow-md w-full h-56 object-cover" /></div>
+      <div id="Shopping" class="slider"><img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f" class="rounded-lg shadow-md w-full h-56 object-cover" /></div>
     </div>
 
-    <!-- Location -->
     <label class="block mb-2 font-semibold text-gray-700">Choose Location:</label>
     <select id="location" class="w-full p-2 border-2 border-pink-200 rounded-lg mb-4 focus:ring-2 focus:ring-pink-400">
       <option value="">-- Select a Location --</option>
     </select>
 
-    <!-- Date -->
     <label class="block mb-2 font-semibold text-gray-700">Choose Date:</label>
-    <input type="date" id="date" min="2025-12-20"
-      class="w-full p-2 border-2 border-pink-200 rounded-lg mb-4 focus:ring-2 focus:ring-pink-400" />
+    <input type="date" id="date" min="2025-12-20" class="w-full p-2 border-2 border-pink-200 rounded-lg mb-4 focus:ring-2 focus:ring-pink-400" />
 
-    <!-- Time -->
     <label class="block mb-2 font-semibold text-gray-700">Choose Time:</label>
-    <input type="time" id="time"
-      class="w-full p-2 border-2 border-pink-200 rounded-lg mb-6 focus:ring-2 focus:ring-pink-400" />
+    <input type="time" id="time" class="w-full p-2 border-2 border-pink-200 rounded-lg mb-6 focus:ring-2 focus:ring-pink-400" />
 
-    <!-- Button -->
-    <button onclick="submitPlan()"
-      class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-4 rounded-xl w-full transition transform hover:scale-105 shadow-md">
+    <button onclick="submitPlan()" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-4 rounded-xl w-full transition transform hover:scale-105 shadow-md">
       💌 Submit Date Plan
     </button>
   </div>
 
-  <!-- 🎵 Romantic Music Player -->
   <audio id="bgMusic" loop>
     <source src="araw-gabi.mp3" type="audio/mpeg">
   </audio>
@@ -139,13 +111,12 @@
   <div id="music-btn" onclick="toggleMusic()">🎵</div>
 
   <script>
-    emailjs.init("OuGwYhRbBFT6AGHIS");
+    emailjs.init("OuGwYhRbBFT6AGHIS"); // EmailJS public key
 
     const music = document.getElementById("bgMusic");
     const musicBtn = document.getElementById("music-btn");
     let isPlaying = false;
 
-    // Handle autoplay on first click (browser restriction workaround)
     document.body.addEventListener("click", () => {
       if (!isPlaying) {
         music.volume = 0.4;
@@ -196,42 +167,41 @@
       }
     });
 
-    function submitPlan() {
-      const type = dateType.value;
-      const loc = locationSelect.value;
-      const date = document.getElementById("date").value;
-      const time = document.getElementById("time").value;
+function submitPlan() {
+  const type = dateType.value;
+  const loc = locationSelect.value;
+  const date = document.getElementById("date").value;
+  const time = document.getElementById("time").value;
 
-      if (!type || !loc || !date || !time) {
-        alert("Please complete all fields 💕");
-        return;
-      }
+  if (!type || !loc || !date || !time) {
+    alert("Please complete all fields 💕");
+    return;
+  }
 
-      confetti({
-        particleCount: 200,
-        spread: 100,
-        origin: { y: 0.6 },
-        colors: ['#ff69b4', '#ffb6c1', '#ffffff']
-      });
+  // 1️⃣ Send to Eric
+  emailjs.send("service_bgtl4hh", "template_d25ecnp", {
+    name: "Czaree Elleona Salvador Castro",                   // Czaree's name
+    title: `${type} at ${loc} on ${date} at ${time}`,         // Full submission
+    to_email: "ericreyes0122@gmail.com"
+  })
+  .then(() => {
+    // 2️⃣ Send confirmation to Czaree
+    return emailjs.send("service_bgtl4hh", "template_3a7bx4g", {
+      name: "Czaree Elleona Salvador Castro",
+      title: `${type} at ${loc}`,
+      date_time: `${date} at ${time}`,
+      to_email: "czareeelleonacastro@gmail.com"
+    });
+  })
+  .then(() => {
+    alert("💖 Your date plan has been sent successfully! Check your emails for confirmation.");
+  })
+  .catch(err => {
+    console.error("Email send error:", err);
+    alert("⚠️ Something went wrong while sending the emails. Please try again.");
+  });
+}
 
-      emailjs.send("service_9sps9zj", "template_d25ecnp", {
-        czaree_name: "Czaree Elleona Salvador Castro",
-        date_type: type,
-        date_location: loc,
-        date_day: date,
-        date_time: time,
-        to_email: "ericreyes0122@gmail.com"
-      });
-
-      emailjs.send("service_9sps9zj", "template_3a7bx4g", {
-        name: "Czaree Elleona Salvador Castro",
-        title: `${type} at ${loc}`,
-        to_email: "czareeelleonacastro@gmail.com"
-      })
-        .then(() => {
-          alert("💖 Your date plan has been sent, Czaree! Check your email for a sweet message!");
-        });
-    }
   </script>
 </body>
 </html>
