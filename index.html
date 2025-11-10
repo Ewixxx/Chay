@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Date Planner for Czaree 💖</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    .slider {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.8s ease-in-out;
+    }
+
+    .active {
+      display: block;
+      opacity: 1;
+    }
+
+    .fade-in {
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.97);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-b from-pink-100 to-pink-50 min-h-screen flex flex-col items-center justify-center p-6">
+
+  <div class="max-w-lg w-full bg-white rounded-3xl shadow-2xl p-8 fade-in">
+    <h1 class="text-3xl font-bold text-center text-pink-600 mb-6">
+      💖 Date Planner for Czaree Elleona Salvador Castro 💖
+    </h1>
+
+    <!-- Date Type -->
+    <label class="block mb-2 font-semibold text-gray-700">Choose Date Type:</label>
+    <select id="dateType" class="w-full p-2 border-2 border-pink-200 rounded-lg mb-4 focus:ring-2 focus:ring-pink-400">
+      <option value="">-- Select a Type --</option>
+      <option value="Coffee Date">☕ Coffee Date</option>
+      <option value="Picnic Date">🧺 Picnic Date</option>
+      <option value="Museum Date">🏛️ Museum Date</option>
+      <option value="Night Chill">🌙 Night Chill</option>
+      <option value="Movie Date">🎬 Movie Date</option>
+      <option value="Pet Walking">🐾 Pet Walking</option>
+      <option value="Shopping">🛍️ Shopping</option>
+    </select>
+
+    <!-- Image Preview -->
+    <div id="imageSlider" class="mb-4">
+      <div id="Coffee Date" class="slider">
+        <img src="/coffee.jpg"
+          class="rounded-lg shadow-md w-full h-56 object-cover" />
+      </div>
+      <div id="Picnic Date" class="slider">
+        <img src="/rb.jpg"
+          class="rounded-lg shadow-md w-full h-56 object-cover" />
+      </div>
+      <div id="Museum Date" class="slider">
+        <img src="/museum.jpg"
+          class="rounded-lg shadow-md w-full h-56 object-cover" />
+      </div>
+      <div id="Night Chill" class="slider">
+        <img src="/night.jpg"
+          class="rounded-lg shadow-md w-full h-56 object-cover" />
+      </div>
+      <div id="Movie Date" class="slider">
+        <img src="cinema.jpg"
+          class="rounded-lg shadow-md w-full h-56 object-cover" />
+      </div>
+      <div id="Pet Walking" class="slider">
+        <img src="/panda.jpg"
+          class="rounded-lg shadow-md w-full h-56 object-cover" />
+      </div>
+      <div id="Shopping" class="slider">
+        <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f"
+          class="rounded-lg shadow-md w-full h-56 object-cover" />
+      </div>
+    </div>
+
+    <!-- Location -->
+    <label class="block mb-2 font-semibold text-gray-700">Choose Location:</label>
+    <select id="location" class="w-full p-2 border-2 border-pink-200 rounded-lg mb-4 focus:ring-2 focus:ring-pink-400">
+      <option value="">-- Select a Location --</option>
+    </select>
+
+    <!-- Date -->
+    <label class="block mb-2 font-semibold text-gray-700">Choose Date:</label>
+    <input type="date" id="date" min="2025-12-20"
+      class="w-full p-2 border-2 border-pink-200 rounded-lg mb-4 focus:ring-2 focus:ring-pink-400" />
+
+    <!-- Time -->
+    <label class="block mb-2 font-semibold text-gray-700">Choose Time:</label>
+    <input type="time" id="time"
+      class="w-full p-2 border-2 border-pink-200 rounded-lg mb-6 focus:ring-2 focus:ring-pink-400" />
+
+    <!-- Button -->
+    <button onclick="submitPlan()"
+      class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-4 rounded-xl w-full transition transform hover:scale-105 shadow-md">
+      💌 Submit Date Plan
+    </button>
+  </div>
+
+  <script>
+    emailjs.init("OuGwYhRbBFT6AGHIS");
+
+    const locations = {
+      "Coffee Date": ["Tagaytay", "Metro Manila"],
+      "Picnic Date": ["Marikina Riverbanks", "UP Diliman Sunken Garden"],
+      "Museum Date": ["National Museum", "Art in Island"],
+      "Night Chill": ["BGC", "Tagaytay Overlooking"],
+      "Movie Date": ["Cinema, Home"],
+      "Pet Walking": ["Marikina Pet Park", "Ayala Triangle Gardens"],
+      "Shopping": ["Ayala Malls Manila Bay", "SM Mall of Asia"]
+    };
+
+    const dateType = document.getElementById("dateType");
+    const locationSelect = document.getElementById("location");
+    const sliders = document.querySelectorAll(".slider");
+
+    // Show images & update location options
+    dateType.addEventListener("change", (e) => {
+      const selected = e.target.value;
+      sliders.forEach(slide => slide.classList.remove("active"));
+      if (selected) {
+        document.getElementById(selected).classList.add("active");
+        locationSelect.innerHTML = `<option value="">-- Select a Location --</option>`;
+        locations[selected].forEach(loc => {
+          const opt = document.createElement("option");
+          opt.value = loc;
+          opt.textContent = loc;
+          locationSelect.appendChild(opt);
+        });
+      }
+    });
+
+    // Submit plan and send emails
+    function submitPlan() {
+      const type = dateType.value;
+      const loc = locationSelect.value;
+      const date = document.getElementById("date").value;
+      const time = document.getElementById("time").value;
+
+      if (!type || !loc || !date || !time) {
+        alert("Please complete all fields 💕");
+        return;
+      }
+
+      // Confetti celebration
+      confetti({
+        particleCount: 200,
+        spread: 100,
+        origin: { y: 0.6 },
+        colors: ['#ff69b4', '#ffb6c1', '#ffffff']
+      });
+
+      // Send email to you (Eric)
+      emailjs.send("service_9sps9zj", "template_d25ecnp", {
+        czaree_name: "Czaree Elleona Salvador Castro",
+        date_type: type,
+        date_location: loc,
+        date_day: date,
+        date_time: time,
+        to_email: "ericreyes0122@gmail.com"
+      })
+        .then(() => console.log("Email sent to Eric successfully!"))
+        .catch(err => alert("Failed to send to Eric: " + JSON.stringify(err)));
+
+      // Auto-reply to Czaree
+      emailjs.send("service_9sps9zj", "template_3a7bx4g", {
+        name: "Czaree Elleona Salvador Castro",
+        title: `${type} at ${loc}`,
+        to_email: "czareeelleonacastro@gmail.com"
+      })
+        .then(() => {
+          alert("💖 Your date plan has been sent, Czaree! Check your email for a sweet message!");
+        })
+        .catch(err => alert("Auto-reply failed: " + JSON.stringify(err)));
+    }
+  </script>
+</body>
+
+</html>
