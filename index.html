@@ -35,6 +35,30 @@
         transform: scale(1);
       }
     }
+
+    /* Floating Music Button */
+    #music-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #ff99cc, #ff6699);
+      color: white;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 5px 15px rgba(255, 105, 180, 0.3);
+      cursor: pointer;
+      font-size: 24px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #music-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 20px rgba(255, 105, 180, 0.5);
+    }
   </style>
 </head>
 
@@ -61,28 +85,22 @@
     <!-- Image Preview -->
     <div id="imageSlider" class="mb-4">
       <div id="Coffee Date" class="slider">
-        <img src="coffee.jpg"
-          class="rounded-lg shadow-md w-full h-56 object-cover" />
+        <img src="coffee.jpg" class="rounded-lg shadow-md w-full h-56 object-cover" />
       </div>
       <div id="Picnic Date" class="slider">
-        <img src="rb.jpg"
-          class="rounded-lg shadow-md w-full h-56 object-cover" />
+        <img src="rb.jpg" class="rounded-lg shadow-md w-full h-56 object-cover" />
       </div>
       <div id="Museum Date" class="slider">
-        <img src="museum.jpg"
-          class="rounded-lg shadow-md w-full h-56 object-cover" />
+        <img src="museum.jpg" class="rounded-lg shadow-md w-full h-56 object-cover" />
       </div>
       <div id="Night Chill" class="slider">
-        <img src="night.jpg"
-          class="rounded-lg shadow-md w-full h-56 object-cover" />
+        <img src="night.jpg" class="rounded-lg shadow-md w-full h-56 object-cover" />
       </div>
       <div id="Movie Date" class="slider">
-        <img src="cinema.jpg"
-          class="rounded-lg shadow-md w-full h-56 object-cover" />
+        <img src="cinema.jpg" class="rounded-lg shadow-md w-full h-56 object-cover" />
       </div>
       <div id="Pet Walking" class="slider">
-        <img src="panda.jpg"
-          class="rounded-lg shadow-md w-full h-56 object-cover" />
+        <img src="panda.jpg" class="rounded-lg shadow-md w-full h-56 object-cover" />
       </div>
       <div id="Shopping" class="slider">
         <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f"
@@ -113,15 +131,48 @@
     </button>
   </div>
 
+  <!-- 🎵 Romantic Music Player -->
+  <audio id="bgMusic" loop>
+    <source src="araw-gabi.mp3" type="audio/mpeg">
+  </audio>
+
+  <div id="music-btn" onclick="toggleMusic()">🎵</div>
+
   <script>
     emailjs.init("OuGwYhRbBFT6AGHIS");
+
+    const music = document.getElementById("bgMusic");
+    const musicBtn = document.getElementById("music-btn");
+    let isPlaying = false;
+
+    // Handle autoplay on first click (browser restriction workaround)
+    document.body.addEventListener("click", () => {
+      if (!isPlaying) {
+        music.volume = 0.4;
+        music.play().catch(() => { });
+        isPlaying = true;
+        musicBtn.textContent = "⏸️";
+      }
+    }, { once: true });
+
+    function toggleMusic() {
+      if (music.paused) {
+        music.play();
+        isPlaying = true;
+        musicBtn.textContent = "⏸️";
+      } else {
+        music.pause();
+        isPlaying = false;
+        musicBtn.textContent = "🎵";
+      }
+    }
 
     const locations = {
       "Coffee Date": ["Tagaytay", "Metro Manila"],
       "Picnic Date": ["Marikina Riverbanks", "UP Diliman Sunken Garden"],
       "Museum Date": ["National Museum", "Art in Island"],
       "Night Chill": ["BGC", "Tagaytay Overlooking"],
-      "Movie Date": ["Cinema, Home"],
+      "Movie Date": ["Cinema", "Home"],
       "Pet Walking": ["Marikina Pet Park", "Ayala Triangle Gardens"],
       "Shopping": ["Ayala Malls Manila Bay", "SM Mall of Asia"]
     };
@@ -130,7 +181,6 @@
     const locationSelect = document.getElementById("location");
     const sliders = document.querySelectorAll(".slider");
 
-    // Show images & update location options
     dateType.addEventListener("change", (e) => {
       const selected = e.target.value;
       sliders.forEach(slide => slide.classList.remove("active"));
@@ -146,7 +196,6 @@
       }
     });
 
-    // Submit plan and send emails
     function submitPlan() {
       const type = dateType.value;
       const loc = locationSelect.value;
@@ -158,7 +207,6 @@
         return;
       }
 
-      // Confetti celebration
       confetti({
         particleCount: 200,
         spread: 100,
@@ -166,7 +214,6 @@
         colors: ['#ff69b4', '#ffb6c1', '#ffffff']
       });
 
-      // Send email to you (Eric)
       emailjs.send("service_9sps9zj", "template_d25ecnp", {
         czaree_name: "Czaree Elleona Salvador Castro",
         date_type: type,
@@ -174,11 +221,8 @@
         date_day: date,
         date_time: time,
         to_email: "ericreyes0122@gmail.com"
-      })
-        .then(() => console.log("Email sent to Eric successfully!"))
-        .catch(err => alert("Failed to send to Eric: " + JSON.stringify(err)));
+      });
 
-      // Auto-reply to Czaree
       emailjs.send("service_9sps9zj", "template_3a7bx4g", {
         name: "Czaree Elleona Salvador Castro",
         title: `${type} at ${loc}`,
@@ -186,10 +230,8 @@
       })
         .then(() => {
           alert("💖 Your date plan has been sent, Czaree! Check your email for a sweet message!");
-        })
-        .catch(err => alert("Auto-reply failed: " + JSON.stringify(err)));
+        });
     }
   </script>
 </body>
-
 </html>
